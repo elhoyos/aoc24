@@ -19,7 +19,7 @@ IN
 
 def conditioned_added_mul(input)
   input = "do()#{input}don't()"
-  input.scan(/(?<=do\(\)).*?(?=don't\(\))/)
+  input.scan(/(?<=do\(\)).*?(?=don't\(\))/m)
     .map do
       mul = _1.scan(/(?:mul\((\d{1,3}),(\d{1,3})\))/)
       # pp mul.size
