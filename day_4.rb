@@ -12,9 +12,10 @@ input = <<IN
 IN
 
 XMAS = "XMAS"
+MAS = "MAS"
 
-# input_split = File.readlines("./day_4_input").map { _1.lstrip.rstrip.chars }
-input_split = input.each_line.map { _1.lstrip.rstrip.chars }
+input_split = File.readlines("./day_4_input").map { _1.lstrip.rstrip.chars }
+# input_split = input.each_line.map { _1.lstrip.rstrip.chars }
 
 # pp input_split
 
@@ -46,6 +47,25 @@ def matches_from(i, j, of:)
     # puts "#{word} — #{range}: #{word == XMAS || word.reverse == XMAS}" if range[0] == [6, 4]
     matches << range if word == XMAS || word.reverse == XMAS
   end
+
+  matches
+end
+
+def x_mas_matches_from(i, j, of:)
+  matches = []
+
+  ranges = [
+    [[i, j], [i+1, j+1], [i+2, j+2]], # right_down
+    [[i+2, j], [i+1, j+1], [i, j+2]], # left_down
+  ]
+
+  x_mas = ranges.all? do |range|
+    word = extract(range, of:)
+    # puts "#{word} — #{range}: #{word == MAS || word.reverse == MAS}" if i == 3 && j == 2
+    word == MAS || word.reverse == MAS
+  end
+
+  matches = ranges if x_mas
 
   matches
 end
@@ -88,5 +108,32 @@ end
 
 puts "XMAS appearances: #{xmas_count}"
 
-puts ""
-res_map.each { puts _1.join }
+# puts ""
+# res_map.each { puts _1.join }
+
+
+########## Part two:
+
+xmas_count = 0
+matches_map = {}
+res_map = []
+puzzler.each do |i, j, input_split|
+  res_map[j] ||= []
+  res_map[j][i] ||= "."
+
+  x_mas_matches = x_mas_matches_from(i, j, of: input_split)
+
+  xmas_count += 1 if x_mas_matches.count > 0
+
+  x_mas_matches.each do |matches|
+    matches.each do |(match_i, match_j)|
+      res_map[match_j] ||= []
+      res_map[match_j][match_i] = input_split[match_j][match_i]
+    end
+  end
+end
+
+puts "X_MAS appearances: #{xmas_count}"
+
+# puts ""
+# res_map.each { puts _1.join }
